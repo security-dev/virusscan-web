@@ -8,6 +8,7 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "celery[redis]>=5.4.0",
     "clamav-client==0.6.3",
     "django==4.2.18",
     "django-cotton>=1.5.2",

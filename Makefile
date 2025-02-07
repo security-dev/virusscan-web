@@ -13,7 +13,7 @@ start-bg:  ## Start the development docker containers in the background
 	@$(COMPOSE_COMMAND) up -d
 
 build: ## Build dev containers
-	@$(COMPOSE_COMMAND) build --no-cache
+	@$(COMPOSE_COMMAND) build --pull
 
 ssh: ## SSH into running web container
 	@$(COMPOSE_COMMAND) exec web bash

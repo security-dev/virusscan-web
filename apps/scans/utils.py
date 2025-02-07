@@ -1,4 +1,8 @@
 import hashlib
+import os
+import uuid
+
+from django.conf import settings
 
 
 def calculate_hashes(file_path):
@@ -11,3 +15,9 @@ def calculate_hashes(file_path):
             sha512_hash.update(chunk)
 
     return sha256_hash.hexdigest(), sha512_hash.hexdigest()
+
+
+def build_file_path(scan_id: uuid.UUID):
+    if not isinstance(scan_id, uuid.UUID):
+        raise ValueError("scan_id must be a UUID")
+    return os.path.join(settings.VIRUSSCAN_FILES_DIR, str(scan_id))

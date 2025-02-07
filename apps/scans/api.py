@@ -1,13 +1,12 @@
-import os
 import uuid
 from typing import List
 
-from django.conf import settings
 from django.shortcuts import get_object_or_404
 from ninja import Router, UploadedFile, File, ModelSchema
 
 from .models import Scan
-from .utils import calculate_hashes
+from .tasks import scan_file_by_scan_id
+from .utils import calculate_hashes, build_file_path
 
 router = Router()
 
@@ -18,8 +17,8 @@ class ScanSchema(ModelSchema):
         fields = ("id", "filename", "sha256", "status", "result", "created_at")
 
 
-@router.post("/")
-def upload(request, file: UploadedFile = File(...)):
+@router.post("/", response=ScanSchema)
+def scan_file(request, file: UploadedFile = File(...)):
     # Create Scan object
     scan = Scan.objects.create(
         filename=file.name,  # Store original filename
@@ -27,7 +26,7 @@ def upload(request, file: UploadedFile = File(...)):
         result=None,
     )
 
-    file_path = os.path.join(settings.VIRUSSCAN_FILES_DIR, str(scan.id))
+    file_path = build_file_path(scan.id)
     with open(file_path, "wb+") as destination:
         for chunk in file.chunks():
             destination.write(chunk)
@@ -37,6 +36,12 @@ def upload(request, file: UploadedFile = File(...)):
     scan.sha256 = sha256
     scan.sha512 = sha512
     scan.save()
+
+    # Scan file
+    scan_file_by_scan_id.delay_on_commit(scan.id)
+
+    # Return the object
+    return scan
 
 
 @router.get("/", response=List[ScanSchema])

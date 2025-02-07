@@ -29,15 +29,15 @@ services:
         condition: service_healthy
         restart: true
 
-  frontend:
-    build:
-      context: frontend/
-      dockerfile: Dockerfile.dev
-    working_dir: /app
-    command: tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch
-    tty: true
-    volumes:
-      - .:/app
+  #  frontend:
+  #    build:
+  #      context: frontend/
+  #      dockerfile: Dockerfile.dev
+  #    working_dir: /app
+  #    command: tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch
+  #    tty: true
+  #    volumes:
+  #      - .:/app
 
   clamav:
     image: clamav/clamav:stable
@@ -47,9 +47,40 @@ services:
       - clamav_socket:/tmp
       - files_scan:/files_scan:ro
 
+  redis:
+    image: redis:latest
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: bash -c 'exec 6<>/dev/tcp/redis/6379'
+      interval: 2s
+      retries: 10
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: uv run celery -A virusscan worker -l INFO --pool=solo
+    volumes:
+      - .:/app
+      - clamav_socket:/clamav
+      - files_scan:/files_scan
+    environment:
+      PYTHONUNBUFFERED: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+    env_file:
+      - ./.env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
 
 volumes:
   clamav_data:
   clamav_socket:
   postgres_data:
   files_scan:
+  redis_data:

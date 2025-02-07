@@ -142,7 +142,16 @@ STORAGES = {
     },
 }
 
+REDIS_URL = env("REDIS_URL", default="redis://redis:6379")
+CELERY_BROKER_URL = CELERY_RESULT_BACKEND = REDIS_URL
 
 VIRUSSCAN_FILES_DIR = env.path(
     "VIRUSSCAN_FILES_DIR", default=os.path.join(BASE_DIR, "/files_scan")
 )
+
+CLAMAV_SOCKET = env.str("CLAMAV_SOCKET", default="/clamav/clamd.sock")
+
+CLAMAV_CONFIG = {
+    "backend": "clamd",
+    "address": CLAMAV_SOCKET,
+}

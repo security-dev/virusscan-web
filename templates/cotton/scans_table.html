@@ -15,7 +15,7 @@
     },
     formatResult(result) {
     if (!result) return '-';
-    return result.infected === false ? 'Clean' : '-';
+    return result.infected === false ? 'Clean' : result.details;
     },
     formatDate(dateStr) {
     return new Date(dateStr).toLocaleString();
