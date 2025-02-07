@@ -34,7 +34,7 @@ services:
       context: frontend/
       dockerfile: Dockerfile.dev
     working_dir: /app
-    command: tailwindcss -i ./static/src/input.css -o ./static/src/output.css --watch
+    command: tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch
     tty: true
     volumes:
       - .:/app

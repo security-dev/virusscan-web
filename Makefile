@@ -33,6 +33,9 @@ migrate: ## Run DB migrations in the container
 shell: ## Get a Django shell
 	@$(COMPOSE_COMMAND) run --rm web uv run manage.py shell
 
+test:
+	@$(COMPOSE_COMMAND) run --rm web uv run pytest
+
 .PHONY: help
 .DEFAULT_GOAL := help
 

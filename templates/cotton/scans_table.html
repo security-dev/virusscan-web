@@ -1,50 +1,75 @@
-<div class="overflow-hidden w-full overflow-x-auto rounded-radius border border-outline dark:border-outline-dark"
+<div class="mt-0"
      x-data="{
-        scans: [],
-        async fetchScans() {
-            const response = await fetch('/api/scans/list');
-            this.scans = await response.json();
-        },
-        capitalize(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1);
+    scans: [],
+    loading: true,
+    firstLoad: true,
+    async fetchScans() {
+    this.loading = true;
+    const response = await fetch('/api/scans/');
+    this.scans = await response.json();
+    this.loading = false;
+    this.firstLoad = false;
     },
-        formatResult(result) {
-            if (!result) return '-';
-            return result.infected === false ? 'Clean' : '-';
-        },
-        formatDate(dateStr) {
-            return new Date(dateStr).toLocaleString();
-        }
-     }"
+    capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+    },
+    formatResult(result) {
+    if (!result) return '-';
+    return result.infected === false ? 'Clean' : '-';
+    },
+    formatDate(dateStr) {
+    return new Date(dateStr).toLocaleString();
+    }
+    }"
      x-init="fetchScans();
-             setInterval(() => fetchScans(), 10000);
-             window.addEventListener('scan:uploaded', () => fetchScans());"
+    setInterval(() => fetchScans(), 10000);
+    window.addEventListener('scan:uploaded', () => fetchScans());"
      x-cloak>
-    <div x-show="scans.length === 0" class="p-4 text-center">
-        Loading...
+    <div class="flex w-full h-full items-center">
+        <h3 class="text-base font-semibold text-on-surface dark:text-on-surface-dark">Results</h3>
+        <div class="ml-2" x-show="loading">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"
+                 class="size-5 fill-on-surface motion-safe:animate-spin dark:fill-on-surface-dark">
+                <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"
+                      opacity=".25"></path>
+                <path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"></path>
+            </svg>
+        </div>
     </div>
-    <table x-show="scans.length > 0"
-           x-transition
-           class="w-full text-left text-sm text-on-surface dark:text-on-surface-dark">
-        <thead class="border-b border-outline bg-surface-alt text-sm text-on-surface-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">
-        <tr>
-            <th scope="col" class="p-4">Filename</th>
-            <th scope="col" class="p-4">Submitted</th>
-            <th scope="col" class="p-4">SHA-256</th>
-            <th scope="col" class="p-4">Status</th>
-            <th scope="col" class="p-4 w-64">Result</th>
-        </tr>
-        </thead>
-        <tbody class="divide-y divide-outline dark:divide-outline-dark">
-        <template x-for="scan in scans" :key="scan.id">
+    <div class="mt-4 overflow-hidden w-full overflow-x-auto rounded-radius border border-outline dark:border-outline-dark">
+        <table class="w-full text-left text-sm text-on-surface dark:text-on-surface-dark"
+               x-show="!firstLoad">
+            <thead class="border-b border-outline bg-surface-alt text-sm text-on-surface-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">
             <tr>
-                <td class="p-4" x-text="scan.filename"></td>
-                <td class="p-4" x-text="formatDate(scan.created_at)"></td>
-                <td class="p-4" x-text="scan.sha256"></td>
-                <td class="p-4" x-text="capitalize(scan.status)"></td>
-                <td class="p-4" x-text="formatResult(scan.result)"></td>
+                <th scope="col" class="p-4">Filename</th>
+                <th scope="col" class="p-4">Submitted</th>
+                <th scope="col" class="p-4">SHA-256</th>
+                <th scope="col" class="p-4">Status</th>
+                <th scope="col" class="p-4 w-64">Result</th>
             </tr>
-        </template>
-        </tbody>
-    </table>
+            </thead>
+            <tbody class="divide-y divide-outline dark:divide-outline-dark">
+            <template x-if="scans.length > 0">
+                <template x-for="scan in scans" :key="scan.id">
+                    <tr>
+                        <td class="p-4" x-text="scan.filename"></td>
+                        <td class="p-4" x-text="formatDate(scan.created_at)"></td>
+                        <td class="p-4" x-text="scan.sha256"></td>
+                        <td class="p-4" x-text="capitalize(scan.status)"></td>
+                        <td class="p-4" x-text="formatResult(scan.result)"></td>
+                    </tr>
+                </template>
+            </template>
+            <template x-if="scans.length === 0">
+                <tr>
+                    <td class="p-4">-</td>
+                    <td class="p-4">-</td>
+                    <td class="p-4">-</td>
+                    <td class="p-4">-</td>
+                    <td class="p-4">-</td>
+                </tr>
+            </template>
+            </tbody>
+        </table>
+    </div>
 </div>

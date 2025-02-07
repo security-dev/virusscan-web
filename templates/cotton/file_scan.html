@@ -11,7 +11,7 @@
             formData.append('file', this.file);
 
             try {
-                const response = await fetch('/api/scans/scan_file', {
+                const response = await fetch('/api/scans/', {
                     method: 'POST',
                     body: formData
                 });

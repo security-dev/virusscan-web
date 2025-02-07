@@ -1,6 +1,5 @@
 <!--suppress XmlUnboundNsPrefix -->
 
-{% load compress %}
 {% load static %}
 
 <!DOCTYPE html>
@@ -12,13 +11,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VirusScan Web</title>
 
-    {% compress css %}
-        <link rel="stylesheet" href="{% static 'src/output.css' %}">
-    {% endcompress %}
-    {% compress js %}
-        <script defer src="{% static 'src/utils.js' %}"></script>
-    {% endcompress %}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <script defer src="{% static 'js/utils.js' %}"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
 </head>
 
 <body class="h-full">
