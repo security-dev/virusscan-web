@@ -1,0 +1,55 @@
+services:
+  db:
+    image: postgres:17-bookworm
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=virusscan
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}
+      interval: 2s
+      retries: 10
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8000:8000"
+    command: uv run python manage.py runserver 0.0.0.0:8000
+    env_file:
+      - ./.env
+    volumes:
+      - .:/app
+      - clamav_socket:/clamav
+      - files_scan:/files_scan
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+
+  frontend:
+    build:
+      context: frontend/
+      dockerfile: Dockerfile.dev
+    working_dir: /app
+    command: tailwindcss -i ./static/src/input.css -o ./static/src/output.css --watch
+    tty: true
+    volumes:
+      - .:/app
+
+  clamav:
+    image: clamav/clamav:stable
+    platform: linux/amd64
+    volumes:
+      - clamav_data:/var/lib/clamav
+      - clamav_socket:/tmp
+      - files_scan:/files_scan:ro
+
+
+volumes:
+  clamav_data:
+  clamav_socket:
+  postgres_data:
+  files_scan:

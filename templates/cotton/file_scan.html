@@ -1,0 +1,85 @@
+<div class="mb-4">
+    <span class="text-base font-semibold text-on-surface dark:text-on-surface-dark">Scan a file</span>
+</div>
+<div x-data="{
+        file: null,
+        dragOver: false,
+        async uploadFile() {
+            if (!this.file) return;
+
+            const formData = new FormData();
+            formData.append('file', this.file);
+
+            try {
+                const response = await fetch('/api/scans/scan_file', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) throw new Error('Upload failed');
+
+                // Reset form after successful upload
+                this.file = null;
+                this.$refs.fileInput.value = '';
+                window.dispatchEvent(new CustomEvent('scan:uploaded'));
+            } catch (error) {
+                console.error('Upload error:', error);
+            }
+        }
+     }">
+    <div id="dropZone"
+         class="flex w-full flex-col items-center justify-center gap-2 rounded-radius border border-dashed p-8 text-on-surface dark:text-on-surface-dark"
+         :class="{ 'border-primary': dragOver, 'border-outline dark:border-outline-dark': !dragOver }"
+         @dragover.prevent="dragOver = true"
+         @dragleave.prevent="dragOver = false"
+         @drop.prevent="dragOver = false; file = $event.dataTransfer.files[0]">
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"
+             class="w-12 h-12 opacity-75">
+            <path fill-rule="evenodd"
+                  d="M10.5 3.75a6 6 0 0 0-5.98 6.496A5.25 5.25 0 0 0 6.75 20.25H18a4.5 4.5 0 0 0 2.206-8.423 3.75 3.75 0 0 0-4.133-4.303A6.001 6.001 0 0 0 10.5 3.75Zm2.03 5.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06l1.72-1.72v4.94a.75.75 0 0 0 1.5 0v-4.94l1.72 1.72a.75.75 0 1 0 1.06-1.06l-3-3Z"
+                  clip-rule="evenodd"></path>
+        </svg>
+
+        <div x-show="file" class="text-center">
+            <p class="mb-2">Selected file:</p>
+            <div class="flex items-center justify-center gap-2">
+                <p class="font-medium text-primary dark:text-primary-dark" x-text="file?.name"></p>
+                <button type="button" @click="file = null; $refs.fileInput.value = ''"
+                        class="text-on-surface dark:text-on-surface-dark hover:text-primary dark:hover:text-primary-dark">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                         stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div x-show="!file" class="group">
+            <label class="font-medium text-primary group-focus-within:underline dark:text-primary-dark">
+                <input type="file"
+                       x-ref="fileInput"
+                       @change="file = $event.target.files[0]"
+                       class="sr-only"
+                       aria-describedby="validFileFormats"/>
+                Browse
+            </label>
+            or drag and drop here
+        </div>
+        <small id="validFileFormats">Max. 2GB</small>
+    </div>
+
+    <div class="flex justify-center gap-2 mt-4">
+        <button type="button"
+                @click="uploadFile"
+                :disabled="!file"
+                class="inline-flex justify-center items-center gap-2 whitespace-nowrap rounded-radius bg-primary border border-primary dark:border-primary-dark px-4 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                 stroke="currentColor"
+                 class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
+            </svg>
+            Scan File
+        </button>
+    </div>
+</div>

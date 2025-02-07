@@ -1,0 +1,50 @@
+<div class="overflow-hidden w-full overflow-x-auto rounded-radius border border-outline dark:border-outline-dark"
+     x-data="{
+        scans: [],
+        async fetchScans() {
+            const response = await fetch('/api/scans/list');
+            this.scans = await response.json();
+        },
+        capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+    },
+        formatResult(result) {
+            if (!result) return '-';
+            return result.infected === false ? 'Clean' : '-';
+        },
+        formatDate(dateStr) {
+            return new Date(dateStr).toLocaleString();
+        }
+     }"
+     x-init="fetchScans();
+             setInterval(() => fetchScans(), 10000);
+             window.addEventListener('scan:uploaded', () => fetchScans());"
+     x-cloak>
+    <div x-show="scans.length === 0" class="p-4 text-center">
+        Loading...
+    </div>
+    <table x-show="scans.length > 0"
+           x-transition
+           class="w-full text-left text-sm text-on-surface dark:text-on-surface-dark">
+        <thead class="border-b border-outline bg-surface-alt text-sm text-on-surface-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">
+        <tr>
+            <th scope="col" class="p-4">Filename</th>
+            <th scope="col" class="p-4">Submitted</th>
+            <th scope="col" class="p-4">SHA-256</th>
+            <th scope="col" class="p-4">Status</th>
+            <th scope="col" class="p-4 w-64">Result</th>
+        </tr>
+        </thead>
+        <tbody class="divide-y divide-outline dark:divide-outline-dark">
+        <template x-for="scan in scans" :key="scan.id">
+            <tr>
+                <td class="p-4" x-text="scan.filename"></td>
+                <td class="p-4" x-text="formatDate(scan.created_at)"></td>
+                <td class="p-4" x-text="scan.sha256"></td>
+                <td class="p-4" x-text="capitalize(scan.status)"></td>
+                <td class="p-4" x-text="formatResult(scan.result)"></td>
+            </tr>
+        </template>
+        </tbody>
+    </table>
+</div>
