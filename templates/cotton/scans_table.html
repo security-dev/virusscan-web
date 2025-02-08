@@ -14,15 +14,15 @@
     return str.charAt(0).toUpperCase() + str.slice(1);
     },
     formatResult(result) {
-    if (!result) return '-';
-    return result.infected === false ? 'Clean' : result.details;
+        if (!result) return '-';
+        return result || '-';
     },
     formatDate(dateStr) {
-    return new Date(dateStr).toLocaleString();
+        return new Date(dateStr).toLocaleString();
     }
     }"
      x-init="fetchScans();
-    setInterval(() => fetchScans(), 10000);
+    setInterval(() => fetchScans(), 3000);
     window.addEventListener('scan:uploaded', () => fetchScans());"
      x-cloak>
     <div class="flex w-full h-full items-center">
@@ -55,7 +55,14 @@
                         <td class="p-4" x-text="scan.filename"></td>
                         <td class="p-4" x-text="formatDate(scan.created_at)"></td>
                         <td class="p-4" x-text="scan.sha256"></td>
-                        <td class="p-4" x-text="capitalize(scan.status)"></td>
+                        <td class="p-4"><span :class="{
+                                'inline-flex overflow-hidden rounded-radius px-1 py-0.5 text-xs font-medium': true,
+                                'border-danger text-danger bg-danger/10': scan.status === 'failed' || scan.status === 'found',
+                                'border-success text-success bg-success/10': scan.status === 'clean',
+                                'border-warning text-warning bg-warning/10': scan.status === 'scanning',
+                                'border-outline text-on-surface bg-surface-alt': scan.status === 'pending'
+                            }" x-text="capitalize(scan.status)"></span>
+                        </td>
                         <td class="p-4" x-text="formatResult(scan.result)"></td>
                     </tr>
                 </template>

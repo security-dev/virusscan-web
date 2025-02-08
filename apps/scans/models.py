@@ -9,6 +9,8 @@ class Scan(models.Model):
         SCANNING = "scanning", "Scanning"
         COMPLETED = "completed", "Completed"
         FAILED = "failed", "Failed"
+        CLEAN = "clean", "Clean"
+        FOUND = "found", "Found"
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     filename = models.CharField(max_length=1024)

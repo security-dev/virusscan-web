@@ -780,11 +780,23 @@
     --tw-border-style: dashed;
     border-style: dashed;
   }
+  .border-danger {
+    border-color: var(--color-danger);
+  }
   .border-outline {
     border-color: var(--color-outline);
   }
   .border-primary {
     border-color: var(--color-primary);
+  }
+  .border-success {
+    border-color: var(--color-success);
+  }
+  .border-warning {
+    border-color: var(--color-warning);
+  }
+  .bg-danger\/10 {
+    background-color: color-mix(in oklab, var(--color-danger) 10%, transparent);
   }
   .bg-gray-50 {
     background-color: var(--color-gray-50);
@@ -795,6 +807,9 @@
   .bg-primary {
     background-color: var(--color-primary);
   }
+  .bg-success\/10 {
+    background-color: color-mix(in oklab, var(--color-success) 10%, transparent);
+  }
   .bg-surface {
     background-color: var(--color-surface);
   }
@@ -803,6 +818,9 @@
   }
   .bg-surface-dark\/10 {
     background-color: color-mix(in oklab, var(--color-surface-dark) 10%, transparent);
+  }
+  .bg-warning\/10 {
+    background-color: color-mix(in oklab, var(--color-warning) 10%, transparent);
   }
   .fill-on-surface {
     fill: var(--color-on-surface);
@@ -813,11 +831,17 @@
   .p-8 {
     padding: calc(var(--spacing) * 8);
   }
+  .px-1 {
+    padding-inline: calc(var(--spacing) * 1);
+  }
   .px-2 {
     padding-inline: calc(var(--spacing) * 2);
   }
   .px-4 {
     padding-inline: calc(var(--spacing) * 4);
+  }
+  .py-0\.5 {
+    padding-block: calc(var(--spacing) * 0.5);
   }
   .py-1\.5 {
     padding-block: calc(var(--spacing) * 1.5);
@@ -887,6 +911,9 @@
   .whitespace-nowrap {
     white-space: nowrap;
   }
+  .text-danger {
+    color: var(--color-danger);
+  }
   .text-on-primary {
     color: var(--color-on-primary);
   }
@@ -898,6 +925,12 @@
   }
   .text-primary {
     color: var(--color-primary);
+  }
+  .text-success {
+    color: var(--color-success);
+  }
+  .text-warning {
+    color: var(--color-warning);
   }
   .capitalize {
     text-transform: capitalize;
