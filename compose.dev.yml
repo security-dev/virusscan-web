@@ -28,16 +28,9 @@ services:
       db:
         condition: service_healthy
         restart: true
-
-  #  frontend:
-  #    build:
-  #      context: frontend/
-  #      dockerfile: Dockerfile.dev
-  #    working_dir: /app
-  #    command: tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch
-  #    tty: true
-  #    volumes:
-  #      - .:/app
+      clamav:
+        condition: service_healthy
+        restart: true
 
   clamav:
     image: clamav/clamav:stable
@@ -46,6 +39,10 @@ services:
       - clamav_data:/var/lib/clamav
       - clamav_socket:/tmp
       - files_scan:/files_scan:ro
+    healthcheck:
+      test: /bin/sh -c '[ -e /tmp/clamd.sock ]'
+      interval: 3s
+      retries: 10
 
   redis:
     image: redis:latest
@@ -76,6 +73,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      web:
+        condition: service_started
 
 
 volumes:
