@@ -26,10 +26,9 @@ SECRET_KEY = env(
     default="django-insecure-vyd_oj^#0nj0-x^+3@8kr53jar)bs5c)!o_t%l1rd)nj534snl",
 )
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
 
 # Application definition
@@ -130,6 +129,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+WHITENOISE_ROOT = STATIC_ROOT / "root"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -141,6 +141,7 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
+
 
 REDIS_URL = env("REDIS_URL", default="redis://redis:6379")
 CELERY_BROKER_URL = CELERY_RESULT_BACKEND = REDIS_URL

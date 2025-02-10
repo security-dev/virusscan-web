@@ -4,12 +4,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 ENV PYTHONUNBUFFERED=1
 
-RUN apt-get update && apt-get install -y curl
-
-RUN curl -o- https://deb.nodesource.com/setup_22.x \
-    | bash && apt-get install -y nodejs watchman libpq5 && \
-    node -v && \
-    npm -v
+RUN apt-get update && apt-get install -y curl libpq5
 
 # Install the project into `/app`
 WORKDIR /app

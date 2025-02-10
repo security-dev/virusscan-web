@@ -21,7 +21,7 @@ def map_scan_result_to_status(
 
 
 @shared_task(
-    autoretry_for=(Exception,), retry_backoff=True, retry_kwargs={"max_retries": 5}
+    autoretry_for=(Exception,), retry_backoff=5, retry_kwargs={"max_retries": 5}
 )
 def scan_file_by_scan_id(scan_id: uuid.UUID):
     scan = Scan.objects.get(id=scan_id)

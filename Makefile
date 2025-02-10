@@ -12,8 +12,13 @@ restart: stop start ## Restart Containers
 start-bg:  ## Start the development docker containers in the background
 	@$(COMPOSE_COMMAND) up -d
 
-build: ## Build dev containers
+build: build-dev
+
+build-dev: ## Build dev containers
 	@$(COMPOSE_COMMAND) build --pull
+
+build-prod: ## Build dev containers
+	@docker build -t securitydev/virusscan-web:latest -f Dockerfile.web --pull .
 
 ssh: ## SSH into running web container
 	@$(COMPOSE_COMMAND) exec web bash

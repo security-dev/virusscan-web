@@ -1,0 +1,84 @@
+# syntax=docker/dockerfile:1.7-labs
+# Multi-stage Docker buildfile
+# See https://docs.docker.com/build/building/multi-stage/
+
+# Stage 1: Build the python dependencies
+FROM python:3.12-slim-bookworm as build-python
+
+# This approximately follows this guide: https://hynek.me/articles/docker-uv/
+# Which creates a standalone environment with the dependencies.
+# - Silence uv complaining about not being able to use hard links,
+# - tell uv to byte-compile packages for faster application startups,
+# - prevent uv from accidentally downloading isolated Python builds,
+# - pick a Python (use `/usr/bin/python3.12` on uv 0.5.0 and later),
+# - and finally declare `/app` as the target for `uv sync`.
+ENV UV_LINK_MODE=copy \
+    UV_COMPILE_BYTECODE=1 \
+    UV_PYTHON_DOWNLOADS=never \
+    UV_PROJECT_ENVIRONMENT=/app/.venv
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+COPY pyproject.toml uv.lock /_lock/
+
+# Synchronize dependencies.
+# This layer is cached until uv.lock or pyproject.toml change.
+RUN --mount=type=cache,target=/root/.cache \
+    cd /_lock && \
+    uv sync \
+      --frozen \
+      --no-group dev
+
+# Stage 2: Build the front end files
+FROM node:22-bookworm-slim AS build-node
+RUN nodejs -v && npm -v
+WORKDIR /app
+COPY package.json package-lock.json /app/
+
+RUN npm install
+
+# build needs everything because it needs to be able to do the tailwind class detection / purging stuff
+COPY --exclude=.venv --exclude=node_modules --exclude=.env . /app
+RUN npx @tailwindcss/cli -i ./frontend/input.css -o ./static/css/styles.css
+
+# Stage 3: Build the final image
+# This copies the python dependencies from the first stage
+# and the front end files from the second stage.
+# Add any runtime OS dependencies here.
+FROM python:3.12-slim-bookworm
+ENV PYTHONUNBUFFERED=1
+ENV DEBUG=0
+
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+    --mount=target=/var/cache/apt,type=cache,sharing=locked \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    apt-get update \
+    && apt-get install -y \
+    curl \
+    libpq5 \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
+
+RUN addgroup --system django \
+    && adduser --system --ingroup django django
+
+WORKDIR /app
+COPY --from=build-python --chown=django:django /app /app
+ENV PATH="/app/.venv/bin:$PATH"
+
+COPY --chown=django:django --exclude=__pycache__ apps/ /app/apps/
+COPY --chown=django:django --exclude=__pycache__ static/ /app/static/
+COPY --chown=django:django --exclude=__pycache__ templates/ /app/templates/
+COPY --chown=django:django --exclude=__pycache__ virusscan/ /app/virusscan/
+COPY --chown=django:django --exclude=__pycache__ manage.py pyproject.toml /app/
+
+COPY --from=build-node /app/static /app/static
+
+# https://stackoverflow.com/questions/59719175/where-to-run-collectstatic-when-deploying-django-app-to-heroku-using-docker
+RUN DEBUG=False python /app/manage.py collectstatic --noinput --settings=virusscan.settings
+RUN chown django:django -R staticfiles
+
+USER django
+
+COPY --chown=django:django docker_startup.sh /start
+RUN chmod +x /start
+CMD /start
