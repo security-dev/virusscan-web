@@ -5,7 +5,7 @@ start: ## Start the development docker containers
 	@$(COMPOSE_COMMAND) up
 
 stop: ## Stop Containers
-	@$(COMPOSE_COMMAND) down
+	@$(COMPOSE_COMMAND) down --remove-orphans
 
 restart: stop start ## Restart Containers
 

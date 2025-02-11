@@ -30,6 +30,8 @@ DEBUG = env.bool("DEBUG", default=False)
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
+# Disable this if you don't want to authenticate users.
+REQUIRE_AUTH = env.bool("VIRUSSCAN_REQUIRE_AUTH", default=True)
 
 # Application definition
 
@@ -42,6 +44,7 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "django_cotton",
+    "ninja_apikey",
     "apps.web",
     "apps.scans",
 ]
@@ -55,6 +58,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "apps.web.middleware.LoginRequiredMiddleware",
 ]
 
 ROOT_URLCONF = "virusscan.urls"
@@ -156,3 +160,6 @@ CLAMAV_CONFIG = {
     "backend": "clamd",
     "address": CLAMAV_SOCKET,
 }
+
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"

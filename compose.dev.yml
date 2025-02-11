@@ -30,9 +30,9 @@ services:
       db:
         condition: service_healthy
         restart: true
-      clamav:
-        condition: service_healthy
-        restart: true
+  #      clamav:
+  #        condition: service_healthy
+  #        restart: true
 
   clamav:
     image: clamav/clamav:stable
