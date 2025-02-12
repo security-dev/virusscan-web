@@ -24,6 +24,13 @@ class LoginRequiredMiddleware(AuthenticationMiddleware):
     def process_view(self, request, view_func, view_args, view_kwargs):
         path = request.path
 
+        # let django-ninja handle the authentication for the API
+        if (
+            path.startswith(f"/{settings.API_PREFIX}/")
+            or getattr(view_func, "__module__", "") == "ninja.operation"
+        ):
+            return
+
         if not settings.REQUIRE_AUTH or request.user.is_authenticated:
             return
 

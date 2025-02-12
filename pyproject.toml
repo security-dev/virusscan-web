@@ -15,6 +15,7 @@ dependencies = [
     "django-environ>=0.12.0",
     "django-ninja>=1.3.0",
     "gunicorn>=23.0.0",
+    "ninja-api-key==1.0.2",
     "psycopg[binary]>=3.2.4",
     "whitenoise>=6.9.0",
 ]

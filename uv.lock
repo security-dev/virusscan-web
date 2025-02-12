@@ -252,6 +252,19 @@ wheels = [
 ]
 
 [[package]]
+name = "ninja-api-key"
+version = "1.0.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "django-ninja" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/eb/21/c125015bbb9a626c323a0908e3c997a255de043713553277b2eacf4b03f3/ninja_api_key-1.0.2.tar.gz", hash = "sha256:cc1a64f6b79cee5e84bf6bbd2d2a8a03e938044db77ca8855ab1d6f75682441d", size = 6651 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/48/b3/64019097ddd81737c953017c2d5ca5b781e73f512a65a57de145afe6fcb6/ninja_api_key-1.0.2-py3-none-any.whl", hash = "sha256:817076874cdc5f10afb941ecd45bceef4981feb23ad0a1fcdd070bc4f391a27e", size = 9526 },
+]
+
+[[package]]
 name = "nodeenv"
 version = "1.9.1"
 source = { registry = "https://pypi.org/simple" }
@@ -597,6 +610,7 @@ dependencies = [
     { name = "django-environ" },
     { name = "django-ninja" },
     { name = "gunicorn" },
+    { name = "ninja-api-key" },
     { name = "psycopg", extra = ["binary"] },
     { name = "whitenoise" },
 ]
@@ -619,6 +633,7 @@ requires-dist = [
     { name = "django-environ", specifier = ">=0.12.0" },
     { name = "django-ninja", specifier = ">=1.3.0" },
     { name = "gunicorn", specifier = ">=23.0.0" },
+    { name = "ninja-api-key", specifier = "==1.0.2" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2.4" },
     { name = "whitenoise", specifier = ">=6.9.0" },
 ]
