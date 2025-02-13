@@ -9,8 +9,8 @@ RUN apt-get update && apt-get install -y curl libpq5
 # Install the project into `/app`
 WORKDIR /app
 
-# Enable bytecode compilation
-ENV UV_COMPILE_BYTECODE=1
+# Disable bytecode compilation
+ENV UV_COMPILE_BYTECODE=0
 
 # Use a venv outside of the main folder
 ENV UV_PROJECT_ENVIRONMENT=/usr/local/venv/

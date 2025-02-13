@@ -95,10 +95,6 @@ else:
         }
     }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -114,9 +110,32 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": '[{asctime}] {levelname} "{name}" {message}',
+            "style": "{",
+            "datefmt": "%d/%b/%Y %H:%M:%S",  # match Django server time format
+        },
+    },
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": "verbose"},
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": env("DJANGO_LOG_LEVEL", default="INFO"),
+        },
+        "virusscan": {
+            "handlers": ["console"],
+            "level": env("VIRUSSCAN_LOG_LEVEL", default="INFO"),
+        },
+    },
+}
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
+AUTH_USER_MODEL = "web.CustomUser"
 
 LANGUAGE_CODE = "en-us"
 
@@ -126,17 +145,10 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 WHITENOISE_ROOT = STATIC_ROOT / "root"
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
