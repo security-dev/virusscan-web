@@ -6,6 +6,10 @@
 
 This is a web application to scan files for viruses using ClamAV.
 
+<div align="center">
+<img src="docs/imgs/dashboard.png" width="600">
+</div>
+
 ## Quick Start
 
 ### Running the Application
@@ -28,10 +32,39 @@ cd virusscan-web
 make run
 ```
 
+### Credentials
+
+Admin credentials should be printed to the console in the first time you run the application.
+
+Example:
+
+```
+web-1     | !!! ADMIN CREDENTIALS !!!
+web-1     | ╔═════════════════════════╗
+web-1     | ║ Username: admin         ║
+web-1     | ║ Password: xxxxxxxxxxxx  ║
+web-1     | ╚═════════════════════════╝
+```
+
 ### Settings
 
 The application settings are stored in the `.env` file. You can copy the `.env.example` file and modify the settings as
 needed.
+
+### APIs
+
+The application provides the following APIs:
+
+- `/api/scans/`: List and create file scans
+- `/api/user/api_keys/`: List and create API keys
+
+#### API Documentation
+
+You can access the API documentation by visiting the `/api/docs` URL.
+
+## Deployment
+
+You can deploy the application to a server using Docker.
 
 ## Tech stack
 
@@ -52,7 +85,8 @@ make build
 make start
 ```
 
-This will build the development environment and start the containers.
+This will build the development environment and start the containers. You'll need to set the `DEBUG` environment
+variable to `True` in the `.env` file.
 
 To generate the correct styles for the frontend, run the following command:
 

@@ -33,7 +33,7 @@ class DynamicAuth(AuthBase):
         return None
 
 
-api = NinjaAPI(auth=DynamicAuth())
+api = NinjaAPI(title="virusscan", version="0.1.0", auth=DynamicAuth())
 
 api.add_router("/scans/", scans_router)
 api.add_router("/user/api_keys/", web_router)
