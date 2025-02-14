@@ -1,6 +1,7 @@
 <div class="mb-4">
     <span class="text-base font-semibold text-on-surface dark:text-on-surface-dark">Scan a file</span>
 </div>
+{% csrf_token %}
 <div x-data="{
         file: null,
         dragOver: false,
@@ -13,6 +14,9 @@
             try {
                 const response = await fetch('/api/scans/', {
                     method: 'POST',
+                    headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
                     body: formData
                 });
                 if (!response.ok) throw new Error('Upload failed');

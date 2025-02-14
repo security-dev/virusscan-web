@@ -1,5 +1,8 @@
 COMPOSE_COMMAND=docker compose -f compose.dev.yml
 
+setup-env:
+	@[ ! -f ./.env ] && cp ./.env.example ./.env || echo ".env file already exists."
+
 start: ## Start the development docker containers
 	@echo "Starting Docker containers for development"
 	@$(COMPOSE_COMMAND) up
@@ -18,7 +21,7 @@ build-dev: ## Build dev containers
 	@$(COMPOSE_COMMAND) build --pull
 
 build-prod: ## Build dev containers
-	@docker build -t securitydev/virusscan-web:latest -f Dockerfile.web --pull .
+	@docker build -t securitydev/virusscan-web:latest -f Dockerfile.web --no-cache --pull .
 
 ssh: ## SSH into running web container
 	@$(COMPOSE_COMMAND) exec web bash
@@ -40,6 +43,11 @@ shell: ## Get a Django shell
 
 test:
 	@$(COMPOSE_COMMAND) run --rm web uv run pytest
+
+start-prod:
+	@docker compose up
+
+run: setup-env start-prod
 
 .PHONY: help
 .DEFAULT_GOAL := help

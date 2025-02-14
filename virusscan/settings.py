@@ -23,7 +23,7 @@ env.read_env(os.path.join(BASE_DIR, ".env"))
 
 SECRET_KEY = env(
     "SECRET_KEY",
-    default="django-insecure-vyd_oj^#0nj0-x^+3@8kr53jar)bs5c)!o_t%l1rd)nj534snl",
+    default="'virusscan-insecure-flyd_oj^#0nj0-x^+3@8kr53jar)bs5c)!o_t%l1rd)nj789snl'",
 )
 
 DEBUG = env.bool("DEBUG", default=False)

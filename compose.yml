@@ -7,36 +7,29 @@ services:
       - POSTGRES_DB=virusscan
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-    ports:
-      - "5432:5432"
     healthcheck:
       test: pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}
       interval: 2s
       retries: 10
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
+    image: securitydev/virusscan-web:latest
     ports:
       - "8000:8000"
-    command: /bin/bash -c "uv run python manage.py migrate --noinput && uv run python manage.py runserver 0.0.0.0:8000"
     env_file:
       - ./.env
     volumes:
-      - .:/app
       - clamav_socket:/clamav
       - files_scan:/files_scan
     depends_on:
       db:
         condition: service_healthy
         restart: true
-  #      clamav:
-  #        condition: service_healthy
-  #        restart: true
+      clamav:
+        condition: service_healthy
+        restart: true
 
   clamav:
     image: clamav/clamav:stable
-    platform: linux/amd64
     volumes:
       - clamav_data:/var/lib/clamav
       - clamav_socket:/tmp
@@ -57,17 +50,11 @@ services:
       retries: 10
 
   celery:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    command: uv run celery -A virusscan worker -l INFO --pool=solo
+    image: securitydev/virusscan-web:latest
+    command: celery -A virusscan worker -l INFO --pool=solo
     volumes:
-      - .:/app
       - clamav_socket:/clamav
       - files_scan:/files_scan
-    environment:
-      PYTHONUNBUFFERED: '1'
-      PYTHONDONTWRITEBYTECODE: '1'
     env_file:
       - ./.env
     depends_on:
