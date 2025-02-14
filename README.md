@@ -62,6 +62,10 @@ The application provides the following APIs:
 
 You can access the API documentation by visiting the `/api/docs` URL.
 
+<div align="center">
+<img src="docs/imgs/api_docs.png" width="600">
+</div>
+
 ## Deployment
 
 You can deploy the application to a server using Docker.
