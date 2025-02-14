@@ -20,3 +20,5 @@ node_modules/
 
 .idea/
 staticfiles/*
+
+static/css/styles.css
