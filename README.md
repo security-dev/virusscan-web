@@ -54,6 +54,12 @@ make start
 
 This will build the development environment and start the containers.
 
+To generate the correct styles for the frontend, run the following command:
+
+```bash
+npx @tailwindcss/cli -i ./frontend/input.css -o ./static/css/styles.css --watch
+```
+
 To stop the containers, run the following command:
 
 ```bash
